@@ -20,11 +20,11 @@ export default function IndexPage({ data }) {
         Questions
       </h2>
       <QuestionGridStyles>
-        {data.questions.edges.map(({node: {asker, episode, tweetUrl, timestamp, title}}) => {
+        {data.questions.edges.map(({node: {title, asker, tweetUrl, timestamp, episode}}) => {
           return (
             <SingleQuestionStyles>
               <h2>{title}</h2>
-              <a href={tweetUrl}>Twitter</a>
+              {tweetUrl && <a href={tweetUrl}>Twitter</a>}
               <p>{episode.releaseDate}</p>
               <p>Asked by {asker}</p>
               <a href={`overcast.fm/${episode.overcastSlug}/${timestamp}`}></a>
@@ -42,7 +42,10 @@ query {
   questions: allStrapiQuestions {
     edges {
       node {
+        title
         asker
+        tweetUrl
+        timestamp
         episode {
           overcastSlug
           releaseDate
