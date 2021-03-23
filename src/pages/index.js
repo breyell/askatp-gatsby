@@ -1,29 +1,55 @@
-import * as React from "react"
-import { Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
+import React from "react"
+import { graphql } from 'gatsby';
+import styled from 'styled-components';
 
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+// import SEO from "../components/seo"
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <StaticImage
-      src="../images/gatsby-astronaut.png"
-      width={300}
-      quality={95}
-      formats={["AUTO", "WEBP", "AVIF"]}
-      alt="A Gatsby astronaut"
-      style={{ marginBottom: `1.45rem` }}
-    />
-    <p>
-      <Link to="/page-2/">Go to page 2</Link> <br />
-      <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-    </p>
-  </Layout>
-)
+const QuestionGridStyles = styled.div`
+  //
+`;
 
-export default IndexPage
+const SingleQuestionStyles = styled.div`
+  margin-bottom: 10px;
+  border: 1px solid black;
+`;
+
+export default function IndexPage({ data }) {
+  return (
+    <>
+      <h2>
+        Questions
+      </h2>
+      <QuestionGridStyles>
+        {data.questions.edges.map(({node: {asker, episode, tweetUrl, timestamp, title}}) => {
+          return (
+            <SingleQuestionStyles>
+              <h2>{title}</h2>
+              <a href={tweetUrl}>Twitter</a>
+              <p>{episode.releaseDate}</p>
+              <p>Asked by {asker}</p>
+              <a href={`overcast.fm/${episode.overcastSlug}/${timestamp}`}></a>
+              <a href={`atp.fm/${episode.number}`}>atp.fm/{episode.number}</a>
+            </SingleQuestionStyles>
+          );
+        })}
+      </QuestionGridStyles>
+    </>
+  );
+}
+
+export const query = graphql`
+query {
+  questions: allStrapiQuestions {
+    edges {
+      node {
+        asker
+        episode {
+          overcastSlug
+          releaseDate
+          number
+        }
+      }
+    }
+  }
+}
+`;
